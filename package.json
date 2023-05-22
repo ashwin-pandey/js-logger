@@ -1,0 +1,31 @@
+{
+  "name": "js-logger",
+  "version": "1.0.0",
+  "description": "A logger service for javascript",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs",
+    "dev": "nodemon index.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashwin-pandey/js-logger.git"
+  },
+  "keywords": [
+    "js-logger",
+    "logger",
+    "log4js",
+    "javascript"
+  ],
+  "author": "Ashwin Pandey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ashwin-pandey/js-logger/issues"
+  },
+  "homepage": "https://github.com/ashwin-pandey/js-logger#readme",
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "moment": "^2.29.4"
+  }
+}
