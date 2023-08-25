@@ -4,14 +4,14 @@ import moment from 'moment/moment.js'
 import { existsSync, mkdirSync, appendFileSync, createReadStream } from 'fs'
 import readLine from 'readline'
 import config from './config.mjs'
-const httpContext = require('http-context');
+import httpContext from 'express-http-context';
 
 /**
  * Main Logging Function
  * @param {object} options 
  * OBJECT { level, message }
  */
-export const log = (options) => {
+const log = (options) => {
     // verify if the provided level exists
     const levelName = getLevelName(options.level);
     
@@ -71,7 +71,22 @@ const writeToConsole = (levelName, message, error = null) => {
     // check if the print format is json
     if (level.json) {
         message = error ? `${chalkFunction(`${error.message}`)}` : message;
-        const data = `{ "level": "${levelName}", "timestamp": "${getFormattedCurrentDate()}", "message": "${message}" }`;
+        let data = { 
+            "level": levelName, 
+            "timestamp": getFormattedCurrentDate()
+        };
+
+        // add things from http context
+        if (httpContext.get('requestId')) {
+            data.requestId = httpContext.get('requestId');
+        }
+        if (httpContext.get('action')) {
+            data.action = httpContext.get('action');
+        }
+
+        data.message = message.replace(/\x1b\[[0-9;]*m/g, ''); // Remove ANSI escape codes (chalk colors) 
+
+        data = JSON.stringify(data);
         console.log(data);
         if (error) {
             console.log(`${chalkFunction(`${error.stack}`)}`);
@@ -177,7 +192,7 @@ const getFormattedCurrentDate = () => {
  * Helper function for printing access level logs
  * @param {string} message 
  */
-export const access = (message) => {
+const access = (message) => {
     log({level: 'access', message: message});
 }
 
@@ -185,7 +200,7 @@ export const access = (message) => {
  * Helper function for printing warn level logs
  * @param {string} message 
  */
-export const warn = (message) => {
+const warn = (message) => {
     log({level: 'warn', message: message});
 }
 
@@ -193,7 +208,7 @@ export const warn = (message) => {
  * Helper function for printing debug level logs
  * @param {string} message 
  */
-export const debug = (message) => {
+const debug = (message) => {
     log({level: 'debug', message: message});
 }
 
@@ -201,7 +216,7 @@ export const debug = (message) => {
  * Helper function for printing info level logs
  * @param {string} message 
  */
-export const info = (message) => {
+const info = (message) => {
     log({level: 'info', message: message});
 }
 
@@ -209,7 +224,7 @@ export const info = (message) => {
  * Helper function for printing event level logs
  * @param {string} message 
  */
-export const event = (message) => {
+const event = (message) => {
     log({level: 'event', message: message});
 }
 
@@ -217,7 +232,7 @@ export const event = (message) => {
  * Helper function for printing system level logs
  * @param {string} message 
  */
-export const system = (message) => {
+const system = (message) => {
     log({level: 'system', message: message});
 }
 
@@ -225,7 +240,7 @@ export const system = (message) => {
  * Helper function for printing database level logs
  * @param {string} message 
  */
-export const database = (message) => {
+const database = (message) => {
     log({level: 'database', message: message});
 }
 
@@ -233,7 +248,7 @@ export const database = (message) => {
  * Helper function for printing error level logs
  * @param {string | Error} message 
  */
-export const error = (error) => {
+const error = (error) => {
     if (typeof(error) === 'string') {
         log({level: 'error', error: error});
     } else {
@@ -245,10 +260,14 @@ export const error = (error) => {
  * Helper function for printing fatal level logs
  * @param {string | Error} message 
  */
-export const fatal = (error) => {
+const fatal = (error) => {
     if (typeof(error) === 'string') {
         log({level: 'fatal', message: error});
     } else {
         log({level: 'fatal', error: error});
     }
 }
+
+const logger = { fatal, log, access, error, system, database, event, info, warn, debug };
+
+export default logger;

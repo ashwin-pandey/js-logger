@@ -1,10 +1,10 @@
-import { log, readLog, info, warn, debug, error, fatal, access, database, system } from "./logger.mjs";
+import logger from "./logger.mjs";
 
-log({level: 'info', message: 'Hello World!'});
-log({level: 'warn', message: 'This is a warning!'});
-
+logger.log({level: 'info', message: 'Hello World!'});
+logger.log({level: 'warn', message: 'This is a warning!'});
+logger.access("This an access message!");
 let issue = new Error();
 issue.message = "There was an error!";
-log({level: 'error', error: issue});
-error(issue);
+logger.log({level: 'error', error: issue});
+logger.error(issue);
 // readLog("info");

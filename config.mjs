@@ -1,5 +1,5 @@
 let config = {
-    writeToFile: true,
+    writeToFile: false,
     json: true
 }
 
