@@ -4,6 +4,7 @@ import moment from 'moment/moment.js'
 import { existsSync, mkdirSync, appendFileSync, createReadStream } from 'fs'
 import readLine from 'readline'
 import config from './config.mjs'
+const httpContext = require('http-context');
 
 /**
  * Main Logging Function
